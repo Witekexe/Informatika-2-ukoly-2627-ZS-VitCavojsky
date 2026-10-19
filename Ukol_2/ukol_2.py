@@ -23,8 +23,15 @@ def extrahuj_hashtagy(text: str) -> set[str]:
         text = "Učíme se #Python a #datové_struktury! #python je #super."
         extrahuj_hashtagy(text) -> {"python", "datové_struktury", "super"}
     """
-    # TODO: Doplňte implementaci
-    return set()
+    vysledek = set()
+    interpunkce = ",.!?:;\""
+    
+    for slovo in text.split():
+        if slovo.startswith("#"):
+            tag = slovo[1:].rstrip(interpunkce).lower()
+            if tag and not tag.startswith("#"):
+                vysledek.add(tag)
+    return vysledek
 
 
 def porovnej_zajmy(student_a: set[str], student_b: set[str]) -> tuple[set[str], set[str], set[str]]:
@@ -42,8 +49,10 @@ def porovnej_zajmy(student_a: set[str], student_b: set[str]) -> tuple[set[str], 
         b = {"python", "sql", "git"}
         porovnej_zajmy(a, b) -> ({"python"}, {"c++", "linux"}, {"sql", "git"})
     """
-    # TODO: Doplňte implementaci
-    return (set(), set(), set())
+    spolecne = student_a & student_b
+    pouze_a = student_a - student_b
+    pouze_b = student_b - student_a
+    return (spolecne, pouze_a, pouze_b)
 
 
 def katalog_knih(knihy: list[tuple[str, str, int]]) -> dict[str, list[str]]:
@@ -67,8 +76,13 @@ def katalog_knih(knihy: list[tuple[str, str, int]]) -> dict[str, list[str]]:
         ]
         katalog_knih(katalog) -> {"Sci-Fi": ["1984", "Duna"], "Fantasy": ["Pán prstenů"]}
     """
-    # TODO: Doplňte implementaci
-    return {}
+    katalog = {}
+    for nazev, zanr, _ in knihy:
+        cisty_zanr = zanr.strip()
+        if cisty_zanr not in katalog:
+            katalog[cisty_zanr] = []
+        katalog[cisty_zanr].append(nazev)
+    return katalog
 
 
 def statistika_textu(text: str) -> dict:
@@ -100,12 +114,42 @@ def statistika_textu(text: str) -> dict:
             "cetnost_delek": {6: 2, 5: 3, 4: 1, 3: 1}
         }
     """
-    # TODO: Doplňte implementaci
+    text_cisty = text.lower()
+    for znak in ",.!?:;":
+        text_cisty = text_cisty.replace(znak, "")
+        
+    slova = text_cisty.split()
+    
+    if not slova:
+        return {
+            "pocet_slov": 0,
+            "pocet_unikatnich": 0,
+            "nejdelsi_slovo": "",
+            "cetnost_delek": {}
+        }
+        
+    pocet_slov = len(slova)
+    pocet_unikatnich = len(set(slova))
+    
+    nejdelsi_slovo = max(slova, key=lambda s: (len(s), slova.index(s) * -1)) if slova else ""
+    # Alternativně pro první nejdelší při shodě:
+    nejdelsi_slovo = ""
+    max_delka = 0
+    for s in slova:
+        if len(s) > max_delka:
+            max_delka = len(s)
+            nejdelsi_slovo = s
+            
+    cetnost_delek = {}
+    for s in slova:
+        dl = len(s)
+        cetnost_delek[dl] = cetnost_delek.get(dl, 0) + 1
+        
     return {
-        "pocet_slov": 0,
-        "pocet_unikatnich": 0,
-        "nejdelsi_slovo": "",
-        "cetnost_delek": {}
+        "pocet_slov": pocet_slov,
+        "pocet_unikatnich": pocet_unikatnich,
+        "nejdelsi_slovo": nejdelsi_slovo,
+        "cetnost_delek": cetnost_delek
     }
 
 
